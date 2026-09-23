@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block title %}TechBlogKe | Technology, Programming and Innovation{% endblock %}
+
+{% block meta_description %}
+Discover practical articles about programming, technology, cybersecurity,
+artificial intelligence and digital innovation in Kenya and beyond.
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-content">
+            <span class="eyebrow">KENYA'S TECHNOLOGY PUBLICATION</span>
+
+            <h1>
+                Learn, build and stay ahead in technology.
+            </h1>
+
+            <p>
+                TechBlogKe publishes practical insights about programming,
+                software development, cybersecurity, artificial intelligence
+                and the technologies shaping our future.
+            </p>
+
+            <div class="hero-actions">
+                <a href="{% url 'blog:post_list' %}" class="button button-primary">
+                    Browse articles
+                </a>
+
+                {% if user.is_authenticated and user.is_author %}
+                    <a href="{% url 'blog:post_create' %}" class="button button-secondary">
+                        Write an article
+                    </a>
+                {% elif not user.is_authenticated %}
+                    <a href="{% url 'accounts:register' %}" class="button button-secondary">
+                        Create an account
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hero-panel">
+            <span class="hero-panel-label">EXPLORE TECHBLOGKE</span>
+
+            <h2>Technology made practical.</h2>
+
+            <p>
+                Follow clear tutorials, industry insights and useful resources
+                created for developers, technology professionals and curious
+                learners.
+            </p>
+
+            <div class="hero-topics">
+                <span>Python</span>
+                <span>Django</span>
+                <span>Web Development</span>
+                <span>Artificial Intelligence</span>
+                <span>Cybersecurity</span>
+                <span>Cloud Computing</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% if featured_post %}
+<section class="section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">EDITOR'S PICK</span>
+                <h2>Featured article</h2>
+            </div>
+
+            <a href="{% url 'blog:post_list' %}" class="text-link">
+                View all articles
+            </a>
+        </div>
+
+        <article class="featured-card">
+            <div class="featured-image">
+                {% if featured_post.featured_image %}
+                    <a href="{{ featured_post.get_absolute_url }}">
+                        <img
+                            src="{{ featured_post.featured_image.url }}"
+                            alt="{{ featured_post.title }}"
+                        >
+                    </a>
+                {% else %}
+                    <a
+                        href="{{ featured_post.get_absolute_url }}"
+                        class="image-placeholder"
+                    >
+                        <span>TechBlogKe</span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="featured-content">
+                {% if featured_post.category %}
+                    <a
+                        href="{{ featured_post.category.get_absolute_url }}"
+                        class="category-badge"
+                    >
+                        {{ featured_post.category.name }}
+                    </a>
+                {% endif %}
+
+                <h3>
+                    <a href="{{ featured_post.get_absolute_url }}">
+                        {{ featured_post.title }}
+                    </a>
+                </h3>
+
+                <p>
+                    {% if featured_post.excerpt %}
+                        {{ featured_post.excerpt|truncatewords:35 }}
+                    {% else %}
+                        {{ featured_post.content|striptags|truncatewords:35 }}
+                    {% endif %}
+                </p>
+
+                <div class="article-meta">
+                    <a
+                        href="{% url 'blog:author_posts' featured_post.author.username %}"
+                    >
+                        {{ featured_post.author.get_full_name|default:featured_post.author.username }}
+                    </a>
+
+                    <span>{{ featured_post.published_at|date:"d M Y" }}</span>
+                    <span>{{ featured_post.reading_time }} min read</span>
+                </div>
+
+                <a
+                    href="{{ featured_post.get_absolute_url }}"
+                    class="button button-primary"
+                >
+                    Read article
+                </a>
+            </div>
+        </article>
+    </div>
+</section>
+{% endif %}
+
+
+{% if categories %}
+<section class="section section-muted">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">EXPLORE TOPICS</span>
+                <h2>Browse by category</h2>
+            </div>
+        </div>
+
+        <div class="category-grid">
+            {% for category in categories %}
+                <a
+                    href="{{ category.get_absolute_url }}"
+                    class="category-card"
+                >
+                    <div>
+                        <h3>{{ category.name }}</h3>
+
+                        {% if category.description %}
+                            <p>
+                                {{ category.description|truncatewords:18 }}
+                            </p>
+                        {% else %}
+                            <p>
+                                Explore the latest {{ category.name|lower }}
+                                articles and insights.
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <span class="category-arrow">View articles</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<section class="section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">LATEST UPDATES</span>
+                <h2>Latest articles</h2>
+            </div>
+
+            {% if latest_posts %}
+                <a href="{% url 'blog:post_list' %}" class="text-link">
+                    View all articles
+                </a>
+            {% endif %}
+        </div>
+
+        {% if latest_posts %}
+            <div class="article-grid">
+                {% for post in latest_posts %}
+                    <article class="article-card">
+                        <div class="article-card-image">
+                            {% if post.featured_image %}
+                                <a href="{{ post.get_absolute_url }}">
+                                    <img
+                                        src="{{ post.featured_image.url }}"
+                                        alt="{{ post.title }}"
+                                        loading="lazy"
+                                    >
+                                </a>
+                            {% else %}
+                                <a
+                                    href="{{ post.get_absolute_url }}"
+                                    class="image-placeholder"
+                                >
+                                    <span>TechBlogKe</span>
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="article-card-content">
+                            {% if post.category %}
+                                <a
+                                    href="{{ post.category.get_absolute_url }}"
+                                    class="category-badge"
+                                >
+                                    {{ post.category.name }}
+                                </a>
+                            {% endif %}
+
+                            <h3>
+                                <a href="{{ post.get_absolute_url }}">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+
+                            <p>
+                                {% if post.excerpt %}
+                                    {{ post.excerpt|truncatewords:22 }}
+                                {% else %}
+                                    {{ post.content|striptags|truncatewords:22 }}
+                                {% endif %}
+                            </p>
+
+                            <div class="article-card-footer">
+                                <div class="article-author">
+                                    <span class="author-avatar">
+                                        {{ post.author.username|first|upper }}
+                                    </span>
+
+                                    <div>
+                                        <a
+                                            href="{% url 'blog:author_posts' post.author.username %}"
+                                        >
+                                            {{ post.author.get_full_name|default:post.author.username }}
+                                        </a>
+
+                                        <span>
+                                            {{ post.published_at|date:"d M Y" }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <span class="reading-time">
+                                    {{ post.reading_time }} min read
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span class="empty-state-label">NO ARTICLES YET</span>
+
+                <h3>TechBlogKe is ready for its first story.</h3>
+
+                <p>
+                    Published articles will appear here. Create an author
+                    account or sign in to start writing.
+                </p>
+
+                {% if user.is_authenticated and user.is_author %}
+                    <a
+                        href="{% url 'blog:post_create' %}"
+                        class="button button-primary"
+                    >
+                        Write the first article
+                    </a>
+                {% elif not user.is_authenticated %}
+                    <a
+                        href="{% url 'accounts:register' %}"
+                        class="button button-primary"
+                    >
+                        Create an account
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+
+<section class="community-section">
+    <div class="container community-card">
+        <div>
+            <span class="eyebrow">JOIN THE COMMUNITY</span>
+
+            <h2>Build your technology knowledge with TechBlogKe.</h2>
+
+            <p>
+                Create an account to interact with articles, manage your
+                profile and become part of a growing technology community.
+            </p>
+        </div>
+
+        <div class="community-actions">
+            {% if user.is_authenticated %}
+                <a
+                    href="{% url 'accounts:dashboard' %}"
+                    class="button button-light"
+                >
+                    Open your dashboard
+                </a>
+            {% else %}
+                <a
+                    href="{% url 'accounts:register' %}"
+                    class="button button-light"
+                >
+                    Create an account
+                </a>
+
+                <a
+                    href="{% url 'accounts:login' %}"
+                    class="button button-outline-light"
+                >
+                    Sign in
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

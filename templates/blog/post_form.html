@@ -1,0 +1,1192 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{% if form.instance.pk %}
+Edit Article | TechBlogKe
+{% else %}
+Create Article | TechBlogKe
+{% endif %}
+{% endblock %}
+
+
+
+{% block meta_description %}
+
+Create and manage technology articles on TechBlogKe.
+
+{% endblock %}
+
+
+
+
+{% block content %}
+
+
+<section class="post-form-page">
+
+
+<div class="container">
+
+
+
+<header class="form-page-header">
+
+
+    <div>
+
+
+        <span class="eyebrow">
+            ARTICLE WORKSPACE
+        </span>
+
+
+        <h1>
+
+            {% if form.instance.pk %}
+
+                Edit Article
+
+            {% else %}
+
+                Share your technology knowledge
+
+            {% endif %}
+
+        </h1>
+
+
+
+        <p>
+
+            Create practical technology content,
+            tutorials, and insights for the TechBlogKe community.
+
+        </p>
+
+
+    </div>
+
+
+
+    <a
+        href="{% url 'blog:my_posts' %}"
+        class="button button-secondary"
+    >
+
+        Back to Articles
+
+    </a>
+
+
+
+</header>
+
+
+
+
+
+<form
+    method="post"
+    enctype="multipart/form-data"
+    class="post-form"
+>
+
+{% csrf_token %}
+
+{% if form.non_field_errors %}
+
+<div class="form-errors">
+
+{{ form.non_field_errors }}
+
+</div>
+
+{% endif %}
+
+{% for field in form %}
+
+    {% if field.errors %}
+
+    <div class="form-errors">
+
+        <strong>
+            {{ field.label }}
+        </strong>
+
+        {{ field.errors }}
+
+    </div>
+
+    {% endif %}
+
+{% endfor %}
+
+{{ form.media }}
+
+
+<div class="post-form-layout">
+
+<main class="post-form-main">
+
+<!-- ARTICLE CONTENT -->
+
+<section class="form-card">
+<div class="form-card-header">
+    <span class="form-step">
+        1
+    </span>
+    <div>
+        <h2>
+            Article content
+        </h2>
+        <p>
+            Write the main content of your technology article.
+        </p>
+    </div>
+</div>
+
+<div class="form-group">
+<label for="{{ form.title.id_for_label }}">
+    Article title
+</label>
+
+{{ form.title }}
+
+{% if form.title.errors %}
+
+<div class="form-errors">
+
+{{ form.title.errors }}
+
+</div>
+
+{% endif %}
+
+<div class="form-group">
+<label for="{{ form.slug.id_for_label }}">
+Article URL
+</label>
+
+{{ form.slug }}
+
+<small class="form-help">
+This controls the article URL. Use lowercase words separated by hyphens.
+</small>
+
+{% if form.slug.errors %}
+<div class="form-errors">
+{{ form.slug.errors }}
+</div>
+
+{% endif %}
+</div>
+
+{% if form.title.errors %}
+
+<div class="form-errors">
+
+{{ form.title.errors }}
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+<div class="form-group">
+<label for="{{ form.excerpt.id_for_label }}">
+    Article summary
+</label>
+
+{{ form.excerpt }}
+<small class="form-help">
+A short description that appears on article cards and search results.
+</small>
+
+{% if form.excerpt.errors %}
+
+<div class="form-errors">
+{{ form.excerpt.errors }}
+
+</div>
+
+{% endif %}
+
+</div>
+
+
+<div class="form-group">
+
+<label for="{{ form.content.id_for_label }}">
+
+    Article content
+
+</label>
+
+
+
+{{ form.content }}
+
+
+
+
+{% if form.content.errors %}
+
+<div class="form-errors">
+
+{{ form.content.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+<!-- FEATURED IMAGE -->
+
+<section class="form-card">
+
+
+<div class="form-card-header">
+
+
+    <span class="form-step">
+        2
+    </span>
+
+
+
+    <div>
+
+        <h2>
+            Featured image
+        </h2>
+
+
+        <p>
+            Add an image that represents your article.
+        </p>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+<div class="form-group">
+
+
+<label for="{{ form.featured_image.id_for_label }}">
+
+    Article image
+
+</label>
+
+
+
+{{ form.featured_image }}
+
+
+
+
+<small class="form-help">
+
+Recommended formats: JPG, PNG, or WebP. Maximum size: 5MB.
+
+</small>
+
+
+
+
+{% if form.featured_image.errors %}
+
+<div class="form-errors">
+
+{{ form.featured_image.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+{% if form.instance.featured_image %}
+
+
+<div class="current-image-preview">
+
+
+<p>
+Current image:
+</p>
+
+
+<img
+src="{{ form.instance.featured_image.url }}"
+alt="{{ form.instance.title }}"
+>
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- ARTICLE ORGANIZATION -->
+
+<section class="form-card">
+
+
+<div class="form-card-header">
+
+
+    <span class="form-step">
+        3
+    </span>
+
+
+
+    <div>
+
+        <h2>
+            Article organization
+        </h2>
+
+
+        <p>
+            Categorize your article to help readers discover it.
+        </p>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label for="{{ form.category.id_for_label }}">
+
+    Category
+
+</label>
+
+
+
+{{ form.category }}
+
+
+
+{% if form.category.errors %}
+
+<div class="form-errors">
+
+{{ form.category.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label for="{{ form.tags.id_for_label }}">
+
+    Tags
+
+</label>
+
+
+
+{{ form.tags }}
+
+
+
+<small class="form-help">
+
+Select relevant topics related to your article.
+
+</small>
+
+
+
+{% if form.tags.errors %}
+
+<div class="form-errors">
+
+{{ form.tags.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- SEARCH OPTIMIZATION -->
+
+<section class="form-card">
+
+
+<div class="form-card-header">
+
+
+    <span class="form-step">
+        4
+    </span>
+
+
+
+    <div>
+
+        <h2>
+            Search optimization
+        </h2>
+
+
+        <p>
+            Improve how your article appears in search engines.
+        </p>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label for="{{ form.meta_title.id_for_label }}">
+
+    Meta title
+
+</label>
+
+
+
+
+{{ form.meta_title }}
+
+
+
+<div class="character-counter">
+
+<span id="meta-title-count">
+0
+</span>
+/
+60 characters
+
+</div>
+
+
+
+
+
+{% if form.meta_title.errors %}
+
+<div class="form-errors">
+
+{{ form.meta_title.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="form-group">
+
+
+<label for="{{ form.meta_description.id_for_label }}">
+
+    Meta description
+
+</label>
+
+
+
+
+{{ form.meta_description }}
+
+
+
+<div class="character-counter">
+
+
+<span id="meta-description-count">
+0
+</span>
+/
+160 characters
+
+
+</div>
+
+
+
+
+
+{% if form.meta_description.errors %}
+
+<div class="form-errors">
+
+{{ form.meta_description.errors }}
+
+</div>
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<!-- GOOGLE SEARCH PREVIEW -->
+
+<div class="seo-preview-box">
+
+
+<span class="seo-preview-label">
+
+Google Preview
+
+</span>
+
+
+
+
+
+<h3 id="seo-preview-title">
+
+{% if form.instance.meta_title %}
+
+{{ form.instance.meta_title }}
+
+{% elif form.instance.title %}
+
+{{ form.instance.title }}
+
+{% else %}
+
+Your article title
+
+{% endif %}
+
+</h3>
+
+<p class="seo-preview-url">
+
+https://techblogke.com/articles/{{ form.instance.slug|default:"your-article" }}/
+
+</p>
+
+<p id="seo-preview-description">
+
+{% if form.instance.meta_description %}
+
+{{ form.instance.meta_description }}
+
+{% elif form.instance.excerpt %}
+
+{{ form.instance.excerpt }}
+
+{% else %}
+
+Your article description will appear here.
+
+{% endif %}
+
+</p>
+
+
+</div>
+</section>
+
+<!-- CLOSE MAIN COLUMN -->
+
+</main>
+
+
+
+
+
+<!-- SIDEBAR -->
+
+<aside class="post-form-sidebar">
+
+
+<!-- PUBLISHING SETTINGS -->
+
+<section class="form-card publish-card">
+
+
+<div class="form-card-header">
+
+
+    <div>
+
+        <span class="eyebrow">
+            PUBLISHING
+        </span>
+
+        <h2>
+            Article settings
+        </h2>
+    </div>
+</div>
+
+<div class="form-group">
+
+<label for="{{ form.status.id_for_label }}">
+
+    Status
+</label>
+
+{{ form.status }}
+
+<small class="form-help">
+
+Save as draft, schedule publication, or publish immediately.
+
+</small>
+
+</div>
+
+{% if form.scheduled_at %}
+
+<div class="form-group">
+
+<label for="{{ form.scheduled_at.id_for_label }}">
+
+    Schedule publication
+
+</label>
+
+{{ form.scheduled_at }}
+
+<small class="form-help">
+Choose when this article should become public.
+</small>
+
+{% if form.scheduled_at.errors %}
+
+<div class="form-errors">
+
+{{ form.scheduled_at.errors }}
+
+</div>
+
+{% endif %}
+
+</div>
+
+{% endif %}
+
+{% if form.instance.status == "SCHEDULED" and form.instance.scheduled_at %}
+
+<div class="scheduled-notice">
+
+    Scheduled for:
+
+    <strong>
+        {{ form.instance.scheduled_at|date:"d M Y, H:i" }}
+    </strong>
+
+</div>
+
+{% endif %}
+
+{% if form.is_featured %}
+
+<div class="checkbox-group">
+
+<label
+for="{{ form.is_featured.id_for_label }}"
+class="checkbox-label"
+>
+
+{{ form.is_featured }}
+
+<span>
+
+<strong>
+{{ form.is_featured.label }}
+</strong>
+
+
+<small>
+Display this article in featured sections.
+</small>
+
+
+</span>
+
+
+</label>
+
+
+</div>
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+<div class="checkbox-group">
+
+
+<label
+for="{{ form.allow_comments.id_for_label }}"
+class="checkbox-label"
+>
+
+
+{{ form.allow_comments }}
+
+
+
+<span>
+
+<strong>
+{{ form.allow_comments.label }}
+</strong>
+
+
+<small>
+Allow readers to comment on this article.
+</small>
+
+
+</span>
+
+
+</label>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<!-- ACTION BUTTONS -->
+
+<div class="publish-actions">
+
+
+
+
+
+{% if form.instance.pk %}
+
+
+<a
+href="{% url 'blog:post_preview' form.instance.slug %}"
+class="button button-secondary"
+target="_blank"
+>
+
+Preview Article
+
+</a>
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+<button
+type="submit"
+class="button button-primary"
+>
+
+
+{% if form.instance.pk %}
+
+Save Changes
+
+{% else %}
+
+Save Article
+
+{% endif %}
+
+
+</button>
+
+
+
+
+
+
+
+
+{% if form.instance.pk %}
+
+
+<a
+href="{{ form.instance.get_absolute_url }}"
+class="button button-secondary"
+>
+
+Cancel
+
+</a>
+
+
+
+{% else %}
+
+
+<a
+href="{% url 'blog:my_posts' %}"
+class="button button-secondary"
+>
+
+Cancel
+
+</a>
+
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<!-- WRITING TIPS -->
+
+
+<section class="editor-help-card">
+
+
+<span class="eyebrow">
+
+WRITING TIPS
+
+</span>
+
+
+
+<h2>
+Create a useful article
+</h2>
+
+
+
+
+<ul>
+
+
+<li>
+Use a clear and specific title.
+</li>
+
+
+<li>
+Explain the problem before presenting the solution.
+</li>
+
+
+<li>
+Break long sections into readable paragraphs.
+</li>
+
+
+<li>
+Use examples and practical explanations.
+</li>
+
+
+<li>
+Review your article before publishing.
+</li>
+
+
+</ul>
+
+
+
+</section>
+
+
+
+
+
+</aside>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</form>
+
+
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<script>
+
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+
+
+const titleInput =
+document.getElementById(
+"{{ form.meta_title.id_for_label }}"
+);
+
+
+
+const descriptionInput =
+document.getElementById(
+"{{ form.meta_description.id_for_label }}"
+);
+
+
+
+const titleCounter =
+document.getElementById(
+"meta-title-count"
+);
+
+
+
+const descriptionCounter =
+document.getElementById(
+"meta-description-count"
+);
+
+
+
+const previewTitle =
+document.getElementById(
+"seo-preview-title"
+);
+
+
+
+const previewDescription =
+document.getElementById(
+"seo-preview-description"
+);
+
+
+
+
+
+
+function updateSEO(){
+
+
+
+if(titleInput){
+
+
+let titleLength =
+titleInput.value.length;
+
+
+
+titleCounter.textContent =
+titleLength;
+
+
+
+previewTitle.textContent =
+titleInput.value ||
+"Your article title";
+
+}
+
+
+
+if(descriptionInput){
+
+
+let descriptionLength =
+descriptionInput.value.length;
+
+
+
+descriptionCounter.textContent =
+descriptionLength;
+
+
+
+previewDescription.textContent =
+descriptionInput.value ||
+"Your article description will appear here.";
+
+}
+
+}
+
+if(titleInput){
+
+titleInput.addEventListener(
+"input",
+updateSEO
+);
+
+}
+
+if(descriptionInput){
+descriptionInput.addEventListener(
+"input",
+updateSEO
+);
+}
+
+updateSEO();
+});
+</script>
+{% endblock %}

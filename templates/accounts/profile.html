@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}My Profile | TechBlogKe{% endblock %}
+{% block content %}
+<section class="profile-page"><div class="container narrow-container">
+  <nav class="breadcrumb"><a href="{% url 'blog:home' %}">Home</a><span>/</span><a href="{% url 'accounts:dashboard' %}">Dashboard</a><span>/</span><span>Profile</span></nav>
+  <article class="profile-card">
+    <div class="profile-card-header">{% if user.profile_image %}<img src="{{ user.profile_image.url }}" alt="{{ user.username }}" class="profile-photo">{% else %}<span class="profile-placeholder">{{ user.username|first|upper }}</span>{% endif %}<div><span class="eyebrow">TECHBLOGKE PROFILE</span><h1>{{ user.get_full_name|default:user.username }}</h1><span class="role-badge">{{ user.get_role_display }}</span></div></div>
+    <div class="profile-details"><div><span>Email</span><strong>{{ user.email }}</strong></div><div><span>Username</span><strong>{{ user.username }}</strong></div><div><span>Member since</span><strong>{{ user.date_joined|date:"d M Y" }}</strong></div>{% if user.website %}<div><span>Website</span><a href="{{ user.website }}" target="_blank" rel="noopener noreferrer">{{ user.website }}</a></div>{% endif %}</div>
+    <div class="profile-bio"><h2>About</h2><p>{{ user.bio|default:"No biography has been added yet." }}</p></div>
+    <div class="form-actions"><a class="button button-primary" href="{% url 'accounts:profile_edit' %}">Edit profile</a><a class="button button-secondary" href="{% url 'accounts:dashboard' %}">Dashboard</a></div>
+  </article>
+</div></section>
+{% endblock %}

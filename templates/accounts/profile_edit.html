@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile | TechBlogKe{% endblock %}
+{% block content %}
+<section class="form-page"><div class="container narrow-container">
+  <nav class="breadcrumb"><a href="{% url 'blog:home' %}">Home</a><span>/</span><a href="{% url 'accounts:profile' %}">Profile</a><span>/</span><span>Edit</span></nav>
+  <div class="form-card standalone-form-card"><span class="eyebrow">ACCOUNT SETTINGS</span><h1>Edit your profile</h1><p>Update the information displayed on your TechBlogKe profile.</p>
+    <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}<div class="form-group"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<small class="form-error">{{ error }}</small>{% endfor %}</div>{% endfor %}
+      <div class="form-actions"><button class="button button-primary" type="submit">Save changes</button><a class="button button-secondary" href="{% url 'accounts:profile' %}">Cancel</a></div>
+    </form>
+  </div>
+</div></section>
+{% endblock %}

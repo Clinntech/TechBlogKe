@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Article | TechBlogKe{% endblock %}
+
+{% block meta_description %}
+Confirm whether you want to permanently delete this TechBlogKe article.
+{% endblock %}
+
+{% block content %}
+
+<section class="confirmation-page">
+    <div class="container confirmation-container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="{% url 'blog:home' %}">Home</a>
+            <span>/</span>
+
+            <a href="{% url 'blog:my_posts' %}">My articles</a>
+            <span>/</span>
+
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title|truncatewords:6 }}
+            </a>
+
+            <span>/</span>
+            <span>Delete</span>
+        </nav>
+
+
+        <div class="confirmation-card danger-confirmation-card">
+
+            <div class="confirmation-icon" aria-hidden="true">
+                !
+            </div>
+
+            <span class="eyebrow danger-text">
+                DELETE ARTICLE
+            </span>
+
+            <h1>Are you sure you want to delete this article?</h1>
+
+            <p class="confirmation-description">
+                You are about to permanently delete the article below.
+                This action cannot be undone.
+            </p>
+
+
+            <div class="delete-article-preview">
+                {% if post.featured_image %}
+                    <div class="delete-preview-image">
+                        <img
+                            src="{{ post.featured_image.url }}"
+                            alt="{{ post.title }}"
+                        >
+                    </div>
+                {% endif %}
+
+                <div class="delete-preview-content">
+                    {% if post.category %}
+                        <span class="category-badge">
+                            {{ post.category.name }}
+                        </span>
+                    {% endif %}
+
+                    <h2>{{ post.title }}</h2>
+
+                    {% if post.excerpt %}
+                        <p>{{ post.excerpt|truncatewords:25 }}</p>
+                    {% else %}
+                        <p>
+                            {{ post.content|striptags|truncatewords:25 }}
+                        </p>
+                    {% endif %}
+
+                    <div class="post-meta">
+                        <span>
+                            Created {{ post.created_at|date:"d M Y" }}
+                        </span>
+
+                        <span>
+                            Status: {{ post.get_status_display }}
+                        </span>
+
+                        <span>
+                            {{ post.view_count }} view{{ post.view_count|pluralize }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="delete-warning">
+                <strong>This will permanently remove:</strong>
+
+                <ul>
+                    <li>The article and all its content</li>
+                    <li>The featured image associated with the article</li>
+                    <li>All comments posted under the article</li>
+                    <li>The article from search and category pages</li>
+                </ul>
+            </div>
+
+
+            <form method="post" class="confirmation-form">
+                {% csrf_token %}
+
+                <div class="confirmation-actions">
+                    <button
+                        type="submit"
+                        class="button button-danger"
+                    >
+                        Yes, delete article
+                    </button>
+
+                    <a
+                        href="{{ post.get_absolute_url }}"
+                        class="button button-secondary"
+                    >
+                        No, keep article
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

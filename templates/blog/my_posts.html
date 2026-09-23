@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}
+Manage Articles | TechBlogKe
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+<div class="container">
+
+<header class="dashboard-page-header">
+
+    <div>
+
+        <span class="eyebrow">
+            AUTHOR WORKSPACE
+        </span>
+
+        <h1>
+            My Articles
+        </h1>
+
+        <p>
+            Create, manage, and monitor your published articles and drafts.
+        </p>
+
+    </div>
+
+    <a
+        href="{% url 'blog:post_create' %}"
+        class="button button-primary"
+    >
+        + Create Article
+    </a>
+
+</header>
+
+
+<section class="dashboard-grid stats-grid">
+
+    <div class="dashboard-card stat-card">
+
+        <span class="dashboard-card-label">
+            ARTICLES
+        </span>
+
+        <h2>
+            {{ total_count }}
+        </h2>
+
+        <p>
+            Total articles created
+        </p>
+
+    </div>
+
+
+    <div class="dashboard-card stat-card">
+
+        <span class="dashboard-card-label">
+            PUBLISHED
+        </span>
+
+        <h2>
+            {{ published_count }}
+        </h2>
+
+        <p>
+            Live articles
+        </p>
+
+    </div>
+
+
+    <div class="dashboard-card stat-card">
+
+        <span class="dashboard-card-label">
+            DRAFTS
+        </span>
+
+        <h2>
+            {{ draft_count }}
+        </h2>
+
+        <p>
+            Articles waiting to publish
+        </p>
+
+    </div>
+
+
+    <div class="dashboard-card stat-card">
+
+        <span class="dashboard-card-label">
+            VIEWS
+        </span>
+
+        <h2>
+            {{ total_views }}
+        </h2>
+
+        <p>
+            Total article views
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="article-management-toolbar">
+
+<form
+    method="get"
+    class="article-search-form"
+>
+
+    <input
+        type="search"
+        name="q"
+        value="{{ search_query }}"
+        placeholder="Search your articles..."
+        class="form-control"
+    >
+
+    <button
+        type="submit"
+        class="button button-primary"
+    >
+        Search
+    </button>
+
+</form>
+
+
+<div class="article-filters">
+
+    <a
+        href="{% url 'blog:my_posts' %}"
+        class="filter-button {% if not status_filter and not featured_filter %}active{% endif %}"
+    >
+        All
+    </a>
+
+
+    <a
+        href="?status=published"
+        class="filter-button {% if status_filter == 'published' %}active{% endif %}"
+    >
+        Published
+    </a>
+
+
+    <a
+        href="?status=scheduled"
+        class="filter-button {% if status_filter == 'scheduled' %}active{% endif %}"
+    >
+        Scheduled
+    </a>
+
+
+    <a
+        href="?status=draft"
+        class="filter-button {% if status_filter == 'draft' %}active{% endif %}"
+    >
+        Drafts
+    </a>
+
+
+    <a
+        href="?featured=true"
+        class="filter-button {% if featured_filter == 'true' %}active{% endif %}"
+    >
+        Featured
+    </a>
+
+</div>
+
+</section>
+
+My Articles
+
+Stats
+
+Search + Filters
+
+--------------------------------
+Article Card
+
+Image
+Status
+Title
+Excerpt
+Metadata
+Actions
+--------------------------------
+
+Pagination
+{% if page_obj.has_other_pages %}
+
+<nav class="pagination">
+
+
+    {% if page_obj.has_previous %}
+
+    <a
+        href="?page={{ page_obj.previous_page_number }}"
+        class="pagination-button"
+    >
+        Previous
+    </a>
+
+    {% endif %}
+
+
+
+    <span class="pagination-current">
+
+        Page {{ page_obj.number }}
+        of
+        {{ page_obj.paginator.num_pages }}
+
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+    <a
+        href="?page={{ page_obj.next_page_number }}"
+        class="pagination-button"
+    >
+        Next
+    </a>
+
+    {% endif %}
+
+
+</nav>
+
+{% endif %}
+
+
+</div>
+
+</section>
+
+
+{% endblock %}
+

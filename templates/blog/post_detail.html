@@ -1,0 +1,1245 @@
+{% extends "base.html" %}
+
+{% block robots_meta %}
+    {% if post.status != "published" or is_preview % or post.published_at > current_time %}
+        <meta name="robots" content="noindex, nofollow">
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {{ post.seo_title|default:post.title }} | TechBlogKe
+{% endblock %}
+
+
+{% block meta_description %}
+
+    {% if post.seo_description %}
+        {{ post.seo_description }}
+
+    {% elif post.excerpt %}
+        {{ post.excerpt|truncatewords:25 }}
+
+    {% else %}
+        {{ post.content|striptags|truncatewords:25 }}
+
+    {% endif %}
+
+{% endblock %}
+
+{% block canonical_url %}
+    {% if post.status == "PUBLISHED" %}
+        <link
+            rel="canonical"
+            href="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"
+        >
+    {% endif %}
+{% endblock %}
+
+{% block social_meta %}
+    <meta property="og:site_name" content="TechBlogKe">
+    <meta
+        property="og:title"
+        content="{{ post.meta_title|default:post.title }}"
+    >
+    <meta
+        property="og:description"
+        content="{{ post.meta_description|default:post.excerpt|striptags }}"
+    >
+    <meta property="og:type" content="article">
+    <meta
+        property="og:url"
+        content="{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"
+    >
+
+    {% if post.published_at %}
+        <meta
+            property="article:published_time"
+            content="{{ post.published_at|date:'c' }}"
+        >
+    {% endif %}
+
+    <meta
+        property="article:modified_time"
+        content="{{ post.updated_at|date:'c' }}"
+    >
+
+    <meta
+    name="twitter:card"
+    content="{% if social_image_url %}summary_large_image{% else %}summary{% endif %}"
+    >
+
+    <meta
+        name="twitter:title"
+        content="{{ post.meta_title|default:post.title }}"
+    >
+    <meta
+        name="twitter:description"
+        content="{{ post.meta_description|default:post.excerpt|striptags }}"
+    >
+
+    {% if social_image_url %}
+    <meta property="og:image" content="{{ social_image_url }}">
+    <meta property="og:image:alt" content="{{ post.title }}">
+    <meta name="twitter:image" content="{{ social_image_url }}">
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+<article class="article-page">
+
+
+    <!-- Article Header -->
+    <header class="article-header">
+
+        <div class="container article-header-container">
+
+
+            <!-- Breadcrumb -->
+
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+
+                <a href="{% url 'blog:home' %}">
+                    Home
+                </a>
+
+                <span>/</span>
+
+
+                <a href="{% url 'blog:post_list' %}">
+                    Articles
+                </a>
+
+
+                {% if post.category %}
+
+                    <span>/</span>
+
+
+                    <a href="{{ post.category.get_absolute_url }}">
+                        {{ post.category.name }}
+                    </a>
+
+                {% endif %}
+
+            </nav>
+
+{% if is_preview %}
+
+<section class="preview-banner">
+
+    <div class="container">
+
+        <div class="preview-banner-inner">
+
+            <div>
+
+                <span class="eyebrow">
+                    PREVIEW MODE
+                </span>
+
+                <h2>
+                    This article is currently a preview
+                </h2>
+
+                <p>
+                    This draft is only visible to you and authorized administrators.
+                    It will not appear publicly until published.
+                </p>
+
+            </div>
+
+
+            <div class="preview-actions">
+
+                <a
+                    href="{% url 'blog:post_update' post.slug %}"
+                    class="button button-primary"
+                >
+                    Edit Article
+                </a>
+
+
+                <a
+                    href="{% url 'blog:my_posts' %}"
+                    class="button button-secondary"
+                >
+                    Back to Articles
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+            <!-- Category -->
+
+            <div class="article-labels">
+
+                {% if post.category %}
+
+                    <a
+                        href="{{ post.category.get_absolute_url }}"
+                        class="category-badge"
+                    >
+                        {{ post.category.name }}
+                    </a>
+
+                {% endif %}
+
+
+
+                {% if post.status == "DRAFT" %}
+
+                    <span class="draft-badge">
+                        Draft article
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- Title -->
+
+            <h1>
+                {{ post.title }}
+            </h1>
+
+
+
+            {% if post.excerpt %}
+
+                <p class="article-summary">
+
+                    {{ post.excerpt }}
+
+                </p>
+
+            {% endif %}
+
+
+
+
+            <!-- Author Information -->
+
+            <div class="article-author-section">
+
+
+                <div class="article-author">
+
+
+                    {% if post.author.profile_image %}
+
+                        <img
+                            src="{{ post.author.profile_image.url }}"
+                            alt="{{ post.author.get_full_name|default:post.author.username }}"
+                            class="author-profile-image"
+                        >
+
+                    {% else %}
+
+                        <span class="author-avatar author-avatar-large">
+
+                            {{ post.author.username|first|upper }}
+
+                        </span>
+
+                    {% endif %}
+
+
+
+
+                    <div class="author-information">
+
+
+                        <a
+                            href="{% url 'blog:author_posts' post.author.username %}"
+                            class="author-name"
+                        >
+
+                            {{ post.author.get_full_name|default:post.author.username }}
+
+                        </a>
+
+
+
+                        <div class="article-meta">
+
+
+                            {% if post.published_at %}
+
+                                <span>
+                                    Published {{ post.published_at|date:"d M Y" }}
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    Created {{ post.created_at|date:"d M Y" }}
+                                </span>
+
+                            {% endif %}
+
+
+
+                            <span>
+                                {{ post.reading_time }} min read
+                            </span>
+
+
+
+                            <span>
+                                {{ post.view_count }}
+                                view{{ post.view_count|pluralize }}
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+                <!-- Management Actions -->
+
+
+                {% if user.is_authenticated %}
+
+                    {% if user == post.author or user.is_admin_user %}
+
+
+                        <div class="article-management-actions">
+
+
+                            <a
+                                href="{% url 'blog:post_update' post.slug %}"
+                                class="button button-secondary button-small"
+                            >
+                                Edit article
+                            </a>
+
+
+
+                            <a
+                                href="{% url 'blog:post_delete' post.slug %}"
+                                class="button button-danger button-small"
+                            >
+                                Delete article
+                            </a>
+
+
+                        </div>
+
+
+                    {% endif %}
+
+                {% endif %}
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </header>
+
+
+
+
+
+    <!-- Featured Image -->
+
+
+    {% if post.featured_image %}
+
+
+        <section class="article-featured-image">
+
+            <div class="container">
+
+
+                <img
+                    src="{{ post.featured_image.url }}"
+                    alt="{{ post.title }}"
+                    class="featured-article-image"
+                >
+
+
+            </div>
+
+
+        </section>
+
+
+    {% endif %}
+        <!-- Article Main Content -->
+
+    <section class="article-content-section">
+
+        <div class="container article-layout">
+
+
+            <!-- Main Article -->
+
+            <main class="article-reading-content">
+
+
+                <div class="article-body">
+
+                    {{ post.content|safe }}
+
+                </div>
+
+
+
+
+                <!-- Tags -->
+
+
+                {% if post.tags.all %}
+
+                    <div class="article-tags-section">
+
+
+                        <h3>
+                            Topics
+                        </h3>
+
+
+
+                        <div class="article-tags">
+
+
+                            {% for tag in post.tags.all %}
+
+                                <a href="{{ tag.get_absolute_url }}">
+
+                                    {{ tag.name }}
+
+                                </a>
+
+                            {% endfor %}
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endif %}
+
+
+
+
+
+                <!-- Social Sharing -->
+
+
+                <div class="article-sharing">
+
+
+                    <h3>
+                        Share this article
+                    </h3>
+
+
+                    <div class="sharing-buttons">
+
+
+                        <a
+                            href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="share-button linkedin"
+                        >
+                            LinkedIn
+                        </a>
+
+
+
+                        <a
+                            href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="share-button twitter"
+                        >
+                            X / Twitter
+                        </a>
+
+
+
+                        <a
+                            href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="share-button facebook"
+                        >
+                            Facebook
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <!-- Related Articles -->
+
+
+                {% if related_posts %}
+
+
+                    <section class="related-articles">
+
+
+                        <div class="section-heading">
+
+
+                            <div>
+
+                                <span class="eyebrow">
+                                    KEEP READING
+                                </span>
+
+
+                                <h2>
+                                    Related articles
+                                </h2>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+                        <div class="article-grid">
+
+
+                            {% for related in related_posts %}
+
+
+                                <article class="article-card">
+
+
+                                    {% if related.featured_image %}
+
+
+                                        <div class="article-card-image">
+
+
+                                            <a href="{{ related.get_absolute_url }}">
+
+
+                                                <img
+                                                    src="{{ related.featured_image.url }}"
+                                                    alt="{{ related.title }}"
+                                                    loading="lazy"
+                                                >
+
+
+                                            </a>
+
+
+                                        </div>
+
+
+                                    {% endif %}
+
+
+
+
+
+                                    <div class="article-card-content">
+
+
+                                        {% if related.category %}
+
+
+                                            <a
+                                                href="{{ related.category.get_absolute_url }}"
+                                                class="category-badge"
+                                            >
+
+                                                {{ related.category.name }}
+
+                                            </a>
+
+
+                                        {% endif %}
+
+
+
+
+
+                                        <h3>
+
+
+                                            <a href="{{ related.get_absolute_url }}">
+
+
+                                                {{ related.title }}
+
+
+                                            </a>
+
+
+                                        </h3>
+
+
+
+
+                                        <p>
+
+
+                                            {% if related.excerpt %}
+
+                                                {{ related.excerpt|truncatewords:18 }}
+
+                                            {% else %}
+
+                                                {{ related.content|striptags|truncatewords:18 }}
+
+                                            {% endif %}
+
+
+                                        </p>
+
+
+
+                                        <a
+                                            href="{{ related.get_absolute_url }}"
+                                            class="text-link"
+                                        >
+
+                                            Read article →
+
+                                        </a>
+
+
+
+                                    </div>
+
+
+
+                                </article>
+
+
+
+                            {% endfor %}
+
+
+                        </div>
+
+
+                    </section>
+
+
+                {% endif %}
+
+
+
+
+
+                <!-- Author Box -->
+
+
+                <section class="article-author-box">
+
+
+                    <div class="author-box-inner">
+
+
+                        {% if post.author.profile_image %}
+
+
+                            <img
+                                src="{{ post.author.profile_image.url }}"
+                                alt="{{ post.author.username }}"
+                                class="author-box-image"
+                            >
+
+
+                        {% else %}
+
+
+                            <div class="author-box-placeholder">
+
+                                {{ post.author.username|first|upper }}
+
+                            </div>
+
+
+                        {% endif %}
+
+
+
+
+                        <div class="author-box-content">
+
+
+                            <span class="eyebrow">
+                                ABOUT THE AUTHOR
+                            </span>
+
+
+
+                            <h3>
+
+
+                                {{ post.author.get_full_name|default:post.author.username }}
+
+
+                            </h3>
+
+
+
+
+                            {% if post.author.profile.bio %}
+
+
+                                <p>
+
+                                    {{ post.author.profile.bio }}
+
+                                </p>
+
+
+                            {% else %}
+
+
+                                <p>
+
+                                    A TechBlogKe contributor sharing
+                                    practical technology knowledge,
+                                    tutorials, and insights.
+
+                                </p>
+
+
+                            {% endif %}
+
+
+
+
+                            <a
+                                href="{% url 'blog:author_posts' post.author.username %}"
+                                class="button button-secondary button-small"
+                            >
+
+                                View all articles
+
+                            </a>
+
+
+
+                        </div>
+
+
+
+                    </div>
+
+
+                </section>
+
+
+
+            </main>
+                        <!-- Sidebar -->
+
+            <aside class="article-sidebar">
+
+
+                <section class="sidebar-card">
+
+
+                    <span class="eyebrow">
+                        ARTICLE INFORMATION
+                    </span>
+
+
+                    <h3>
+                        Details
+                    </h3>
+
+
+
+                    <div class="sidebar-details">
+
+
+                        {% if post.author %}
+
+                            <div class="sidebar-detail-item">
+
+                                <span>
+                                    Author
+                                </span>
+
+                                <a href="{% url 'blog:author_posts' post.author.username %}">
+
+                                    {{ post.author.get_full_name|default:post.author.username }}
+
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+
+
+                        {% if post.category %}
+
+                            <div class="sidebar-detail-item">
+
+                                <span>
+                                    Category
+                                </span>
+
+
+                                <a href="{{ post.category.get_absolute_url }}">
+
+                                    {{ post.category.name }}
+
+                                </a>
+
+
+                            </div>
+
+
+                        {% endif %}
+
+
+
+
+
+                        <div class="sidebar-detail-item">
+
+                            <span>
+                                Reading time
+                            </span>
+
+
+                            <strong>
+                                {{ post.reading_time }} minutes
+                            </strong>
+
+
+                        </div>
+
+
+
+
+
+                        <div class="sidebar-detail-item">
+
+                            <span>
+                                Published
+                            </span>
+
+
+                            <strong>
+
+                                {% if post.published_at %}
+
+                                    {{ post.published_at|date:"d M Y" }}
+
+                                {% else %}
+
+                                    Not published
+
+                                {% endif %}
+
+
+                            </strong>
+
+
+                        </div>
+
+
+
+
+
+                        {% if post.updated_at %}
+
+                            <div class="sidebar-detail-item">
+
+                                <span>
+                                    Updated
+                                </span>
+
+
+                                <strong>
+
+                                    {{ post.updated_at|date:"d M Y" }}
+
+                                </strong>
+
+
+                            </div>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                </section>
+
+
+
+
+
+
+                <!-- Popular Topics -->
+
+                {% if popular_tags %}
+
+
+                    <section class="sidebar-card">
+
+
+                        <span class="eyebrow">
+                            EXPLORE
+                        </span>
+
+
+                        <h3>
+                            Popular topics
+                        </h3>
+
+
+
+                        <div class="sidebar-tags">
+
+
+                            {% for tag in popular_tags %}
+
+                                <a href="{{ tag.get_absolute_url }}">
+
+                                    {{ tag.name }}
+
+                                </a>
+
+
+                            {% endfor %}
+
+
+                        </div>
+
+
+                    </section>
+
+
+                {% endif %}
+
+
+
+
+            </aside>
+
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+
+
+    <!-- Comments Section -->
+
+
+    <section class="comments-section">
+
+
+        <div class="container">
+
+
+            <div class="comments-container">
+
+
+                <div class="section-heading">
+
+
+                    <div>
+
+                        <span class="eyebrow">
+                            COMMUNITY
+                        </span>
+
+
+                        <h2>
+                            Comments
+                        </h2>
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                {% if user.is_authenticated %}
+
+
+                    <div class="comment-form-card">
+
+
+                        <form method="post">
+
+
+                            {% csrf_token %}
+
+
+                            {{ comment_form.as_p }}
+
+
+                            <button
+                                type="submit"
+                                class="button button-primary"
+                            >
+
+                                Post comment
+
+                            </button>
+
+
+                        </form>
+
+
+                    </div>
+
+
+
+                {% else %}
+
+
+                    <div class="comment-login-card">
+
+
+                        <p>
+
+                            Join the conversation by signing in to your
+                            TechBlogKe account.
+
+                        </p>
+
+
+
+                        <a
+                            href="{% url 'accounts:login' %}"
+                            class="button button-secondary"
+                        >
+
+                            Sign in
+
+                        </a>
+
+
+                    </div>
+
+
+
+                {% endif %}
+
+
+
+
+
+
+                {% if comments %}
+
+
+                    <div class="comments-list">
+
+
+                        {% for comment in comments %}
+
+
+                            <article class="comment-card">
+
+
+                                <div class="comment-header">
+
+
+                                    <div class="comment-author">
+
+
+                                        {% if comment.user.profile_image %}
+
+
+                                            <img
+                                                src="{{ comment.user.profile_image.url }}"
+                                                alt="{{ comment.user.username }}"
+                                                class="comment-author-image"
+                                            >
+
+
+                                        {% else %}
+
+
+                                            <span class="author-avatar">
+
+
+                                                {{ comment.user.username|first|upper }}
+
+
+                                            </span>
+
+
+                                        {% endif %}
+
+
+
+
+
+                                        <div>
+
+
+                                            <strong>
+
+                                                {{ comment.user.get_full_name|default:comment.user.username }}
+
+                                            </strong>
+
+
+
+                                            <small>
+
+                                                {{ comment.created_at|date:"d M Y" }}
+
+                                            </small>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+
+
+                                    {% if user == comment.user or user.is_admin_user %}
+
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'blog:comment_delete' comment.id %}"
+                                        >
+
+                                            {% csrf_token %}
+
+
+                                            <button
+                                                class="comment-delete-button"
+                                                type="submit"
+                                            >
+
+                                                Delete
+
+                                            </button>
+
+
+                                        </form>
+
+
+                                    {% endif %}
+
+
+
+                                </div>
+
+
+
+
+
+                                <p>
+
+                                    {{ comment.content }}
+
+                                </p>
+
+
+
+                            </article>
+
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+
+                {% else %}
+
+
+                    <div class="empty-state">
+
+
+                        <h3>
+                            No comments yet
+                        </h3>
+
+
+                        <p>
+
+                            Be the first person to share your thoughts on
+                            this article.
+
+                        </p>
+
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+</article>
+
+
+{% endblock %}

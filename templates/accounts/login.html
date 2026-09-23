@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign In | TechBlogKe{% endblock %}
+{% block content %}
+<section class="auth-page"><div class="auth-layout">
+  <div class="auth-intro"><span class="eyebrow">WELCOME BACK</span><h1>Continue your TechBlogKe journey.</h1><p>Sign in to manage your profile, join discussions and publish articles when you have author access.</p></div>
+  <div class="auth-card"><h2>Sign in</h2><p>Enter your account details below.</p>
+    <form method="post" novalidate>{% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+      {% for field in form %}<div class="form-group"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="form-error">{{ error }}</small>{% endfor %}</div>{% endfor %}
+      {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+      <div class="auth-help-row"><a href="{% url 'accounts:password_reset' %}">Forgot your password?</a></div>
+      <button class="button button-primary button-full" type="submit">Sign in</button>
+    </form>
+    <p class="auth-switch">Do not have an account? <a href="{% url 'accounts:register' %}">Create one</a></p>
+  </div>
+</div></section>
+{% endblock %}

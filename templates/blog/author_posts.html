@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ author.get_full_name|default:author.username }} | TechBlogKe{% endblock %}
+{% block meta_description %}Read technology articles by {{ author.get_full_name|default:author.username }} on TechBlogKe.{% endblock %}
+{% block content %}
+<section class="author-page">
+  <div class="container">
+    <nav class="breadcrumb"><a href="{% url 'blog:home' %}">Home</a><span>/</span><a href="{% url 'blog:post_list' %}">Articles</a><span>/</span><span>Author</span></nav>
+    <header class="author-profile-card">
+      {% if author.profile_image %}<img class="author-profile-photo" src="{{ author.profile_image.url }}" alt="{{ author.get_full_name|default:author.username }}">{% else %}<span class="author-profile-placeholder">{{ author.username|first|upper }}</span>{% endif %}
+      <div>
+        <span class="eyebrow">TECHBLOGKE AUTHOR</span>
+        <h1>{{ author.get_full_name|default:author.username }}</h1>
+        {% if author.bio %}<p>{{ author.bio }}</p>{% else %}<p>Technology writer and contributor at TechBlogKe.</p>{% endif %}
+        <div class="author-profile-meta"><span>{{ page_obj.paginator.count|default:"0" }} published article{{ page_obj.paginator.count|pluralize }}</span>{% if author.website %}<a href="{{ author.website }}" target="_blank" rel="noopener noreferrer">Visit website</a>{% endif %}</div>
+      </div>
+    </header>
+    <div class="section-heading"><div><span class="eyebrow">PUBLISHED WORK</span><h2>Articles by {{ author.get_full_name|default:author.username }}</h2></div></div>
+    {% if page_obj %}
+    <div class="article-grid">
+      {% for post in page_obj %}
+      <article class="article-card">
+        <div class="article-card-image">{% if post.featured_image %}<a href="{{ post.get_absolute_url }}"><img src="{{ post.featured_image.url }}" alt="{{ post.title }}" loading="lazy"></a>{% else %}<a href="{{ post.get_absolute_url }}" class="image-placeholder"><span>TechBlogKe</span></a>{% endif %}</div>
+        <div class="article-card-content">
+          <div class="article-card-top">{% if post.category %}<a class="category-badge" href="{{ post.category.get_absolute_url }}">{{ post.category.name }}</a>{% endif %}{% if post.is_featured %}<span class="featured-badge">Featured</span>{% endif %}</div>
+          <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+          <p>{% if post.excerpt %}{{ post.excerpt|truncatewords:24 }}{% else %}{{ post.content|striptags|truncatewords:24 }}{% endif %}</p>
+          <div class="article-card-footer"><span>{{ post.published_at|date:"d M Y" }}</span><span>{{ post.reading_time }} min read</span></div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% include "blog/partials/pagination.html" with page_obj=page_obj %}
+    {% else %}
+    <div class="empty-state"><span class="empty-state-label">NO ARTICLES YET</span><h2>This author has no published articles.</h2><p>Browse other TechBlogKe articles while new content is prepared.</p><a class="button button-primary" href="{% url 'blog:post_list' %}">Browse all articles</a></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

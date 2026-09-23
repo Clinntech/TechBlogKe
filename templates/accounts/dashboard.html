@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+Dashboard | TechBlogKe
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="dashboard-page">
+
+
+<div class="container">
+
+
+
+    <!-- Dashboard Header -->
+
+    <header class="dashboard-header">
+
+
+        <div>
+
+
+            <span class="eyebrow">
+                AUTHOR DASHBOARD
+            </span>
+
+
+            <h1>
+                {% if user.first_name %}
+                Welcome back, {{ user.first_name }}
+                {% else %}
+                    Welcome to your dashboard
+                {% endif %}
+            </h1>
+
+
+            <p>
+                Manage your TechBlogKe profile,
+                articles, and publishing activity.
+            </p>
+
+
+        </div>
+
+
+
+
+        {% if user.is_author %}
+
+
+        <a
+            href="{% url 'blog:post_create' %}"
+            class="button button-primary"
+        >
+
+            Write New Article
+
+        </a>
+
+
+        {% endif %}
+
+
+
+    </header>
+
+
+
+
+
+
+
+    <!-- Statistics -->
+
+
+    <section class="dashboard-statistics">
+
+
+        <div class="dashboard-stat-card">
+
+
+            <span>
+                ARTICLES
+            </span>
+
+
+            <strong>
+                {{ article_count }}
+            </strong>
+
+
+            <p>
+                Total articles created
+            </p>
+
+
+        </div>
+
+
+
+
+
+        <div class="dashboard-stat-card">
+
+
+            <span>
+                PUBLISHED
+            </span>
+
+
+            <strong>
+                {{ published_count }}
+            </strong>
+
+
+            <p>
+                Live articles
+            </p>
+
+
+        </div>
+
+
+
+
+
+        <div class="dashboard-stat-card">
+
+
+            <span>
+                DRAFTS
+            </span>
+
+
+            <strong>
+                {{ draft_count }}
+            </strong>
+
+
+            <p>
+                Articles waiting
+            </p>
+
+
+        </div>
+
+
+
+
+
+        <div class="dashboard-stat-card">
+
+
+            <span>
+                VIEWS
+            </span>
+
+
+            <strong>
+                {{ total_views }}
+            </strong>
+
+
+            <p>
+                Total article views
+            </p>
+
+
+        </div>
+
+
+
+    </section>
+
+
+
+
+
+
+
+
+    <!-- Dashboard Content -->
+
+    <div class="dashboard-content-grid">
+
+
+
+
+
+        <!-- Recent Articles -->
+
+
+        <section class="dashboard-panel">
+
+
+            <div class="dashboard-panel-header">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        CONTENT
+                    </span>
+
+
+                    <h2>
+                        Recent Articles
+                    </h2>
+
+                </div>
+
+
+
+
+                {% if user.is_author %}
+
+
+                <a
+                    href="{% url 'blog:my_posts' %}"
+                    class="text-link"
+                >
+
+                    View all
+
+                </a>
+
+
+                {% endif %}
+
+
+
+            </div>
+
+
+
+
+
+
+            {% if recent_posts %}
+
+
+
+                <div class="dashboard-articles">
+
+
+                    {% for post in recent_posts %}
+
+
+                    <article class="dashboard-article-item">
+
+
+
+                        <div>
+
+
+                            <h3>
+
+
+                                <a href="{{ post.get_absolute_url }}">
+
+                                    {{ post.title }}
+
+                                </a>
+
+
+                            </h3>
+
+
+
+                            <div class="dashboard-article-meta">
+
+
+                                {% if post.status == "PUBLISHED" %}
+
+
+                                    <span class="status-published">
+
+                                        Published
+
+                                    </span>
+
+
+                                {% else %}
+
+
+                                    <span class="status-draft">
+
+                                        Draft
+
+                                    </span>
+
+
+                                {% endif %}
+
+
+
+
+
+                                <span>
+
+                                    {{ post.view_count }}
+                                    views
+
+                                </span>
+
+
+
+                                <span>
+
+                                    {{ post.created_at|date:"d M Y" }}
+
+                                </span>
+
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+
+
+                        <a
+                            href="{{ post.get_absolute_url }}"
+                            class="dashboard-arrow"
+                        >
+
+                            →
+
+                        </a>
+
+
+
+                    </article>
+
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+
+
+            {% else %}
+
+
+
+
+                <div class="empty-state">
+
+
+                    <h3>
+                        No articles yet
+                    </h3>
+
+
+                    <p>
+                        Start sharing your technology knowledge
+                        with the TechBlogKe community.
+                    </p>
+
+
+
+                    {% if user.is_author %}
+
+
+                    <a
+                        href="{% url 'blog:post_create' %}"
+                        class="button button-primary"
+                    >
+
+                        Create First Article
+
+                    </a>
+
+
+                    {% endif %}
+
+
+
+                </div>
+
+
+
+            {% endif %}
+
+
+
+        </section>
+
+
+
+
+
+
+
+
+        <!-- Account Panel -->
+
+
+        <aside class="dashboard-panel dashboard-account-panel">
+
+
+
+            <span class="eyebrow">
+                ACCOUNT
+            </span>
+
+
+
+            <h2>
+                Profile
+            </h2>
+
+
+
+
+            <div class="dashboard-profile">
+
+
+
+                {% if user.profile_image %}
+
+
+                    <img
+                        src="{{ user.profile_image.url }}"
+                        alt="{{ user.username }}"
+                    >
+
+
+                {% else %}
+
+
+                    <div class="dashboard-profile-placeholder">
+
+                        {{ user.username|first|upper }}
+
+                    </div>
+
+
+                {% endif %}
+
+
+
+
+                <div>
+
+
+                    <h3>
+
+                        {{ user.get_full_name|default:user.username }}
+
+                    </h3>
+
+
+
+                    <p>
+
+                        {{ user.role }}
+
+                    </p>
+
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+            <a
+                href="{% url 'accounts:profile' %}"
+                class="button button-secondary button-full"
+            >
+
+                View Profile
+
+            </a>
+
+
+
+
+            <a
+                href="{% url 'accounts:profile_edit' %}"
+                class="button button-secondary button-full"
+            >
+
+                Edit Profile
+
+            </a>
+
+
+
+
+        </aside>
+
+
+
+    </div>
+
+
+
+
+
+</div>
+
+
+</section>
+
+
+{% endblock %}

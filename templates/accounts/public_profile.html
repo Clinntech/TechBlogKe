@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    {{ profile_user.get_full_name|default:profile_user.username }} | TechBlogKe
+{% endblock %}
+
+
+
+{% block content %}
+
+<section class="author-profile-page">
+
+
+    <!-- Author Hero -->
+
+    <div class="author-profile-header">
+
+        <div class="container">
+
+
+            <div class="author-profile-card">
+
+
+                <div class="author-profile-image-container">
+
+
+                    {% if profile_user.profile_image %}
+
+                        <img
+                            src="{{ profile_user.profile_image.url }}"
+                            alt="{{ profile_user.username }}"
+                            class="author-profile-image"
+                        >
+
+
+                    {% else %}
+
+
+                        <div class="author-profile-placeholder">
+
+                            {{ profile_user.username|first|upper }}
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+
+
+                <div class="author-profile-information">
+
+
+                    <span class="eyebrow">
+                        TECHBLOGKE AUTHOR
+                    </span>
+
+
+
+                    <h1>
+
+                        {{ profile_user.get_full_name|default:profile_user.username }}
+
+                    </h1>
+
+
+
+
+                    <p class="author-role">
+
+                        {% if profile_user.is_author %}
+
+                            Technology Writer
+
+                        {% else %}
+
+                            TechBlogKe Member
+
+                        {% endif %}
+
+                    </p>
+
+
+
+
+                    {% if profile_user.bio %}
+
+                        <p class="author-bio">
+
+                            {{ profile_user.bio }}
+
+                        </p>
+
+
+                    {% else %}
+
+                        <p class="author-bio">
+
+                            Sharing technology knowledge,
+                            tutorials, and practical insights.
+
+                        </p>
+
+
+                    {% endif %}
+
+
+
+
+
+                    {% if profile_user.website %}
+
+                        <a
+                            href="{{ profile_user.website }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="button button-secondary button-small"
+                        >
+
+                            Visit Website
+
+                        </a>
+
+
+                    {% endif %}
+
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    <!-- Statistics -->
+
+
+    <section class="author-statistics-section">
+
+
+        <div class="container">
+
+
+            <div class="author-statistics-grid">
+
+
+
+                <div class="author-stat-card">
+
+                    <strong>
+                        {{ article_count }}
+                    </strong>
+
+                    <span>
+                        Published Articles
+                    </span>
+
+                </div>
+
+
+
+
+
+                <div class="author-stat-card">
+
+                    <strong>
+                        {{ total_views }}
+                    </strong>
+
+                    <span>
+                        Total Views
+                    </span>
+
+                </div>
+
+
+
+
+
+                <div class="author-stat-card">
+
+                    <strong>
+                        {{ category_count }}
+                    </strong>
+
+                    <span>
+                        Topics Covered
+                    </span>
+
+                </div>
+
+
+
+
+
+                <div class="author-stat-card">
+
+                    <strong>
+                        {{ profile_user.date_joined|date:"Y" }}
+                    </strong>
+
+                    <span>
+                        Member Since
+                    </span>
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+
+
+    <!-- Articles -->
+
+
+    <section class="author-articles-section">
+
+
+        <div class="container">
+
+
+            <div class="section-heading">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        ARTICLES
+                    </span>
+
+
+                    <h2>
+                        Latest articles by
+                        {{ profile_user.get_full_name|default:profile_user.username }}
+                    </h2>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            {% if posts %}
+
+
+                <div class="article-grid">
+
+
+                    {% for post in posts %}
+
+
+                        <article class="article-card">
+
+
+                            {% if post.featured_image %}
+
+
+                                <div class="article-card-image">
+
+
+                                    <a href="{{ post.get_absolute_url }}">
+
+
+                                        <img
+                                            src="{{ post.featured_image.url }}"
+                                            alt="{{ post.title }}"
+                                            loading="lazy"
+                                        >
+
+
+                                    </a>
+
+
+                                </div>
+
+
+                            {% else %}
+
+
+                                <div class="article-card-image">
+
+
+                                    <div class="image-placeholder">
+
+                                        TechBlogKe
+
+                                    </div>
+
+
+                                </div>
+
+
+                            {% endif %}
+
+
+
+
+
+
+                            <div class="article-card-content">
+
+
+
+                                {% if post.category %}
+
+
+                                    <a
+                                        href="{{ post.category.get_absolute_url }}"
+                                        class="category-badge"
+                                    >
+
+                                        {{ post.category.name }}
+
+                                    </a>
+
+
+                                {% endif %}
+
+
+
+
+
+
+                                <h3>
+
+
+                                    <a href="{{ post.get_absolute_url }}">
+
+                                        {{ post.title }}
+
+                                    </a>
+
+
+                                </h3>
+
+
+
+
+
+
+                                <p>
+
+
+                                    {{ post.excerpt|truncatewords:20 }}
+
+
+                                </p>
+
+
+
+
+
+                                <div class="article-card-footer">
+
+
+                                    <span>
+
+                                        {{ post.published_at|date:"d M Y" }}
+
+                                    </span>
+
+
+
+                                    <span>
+
+                                        {{ post.reading_time }} min read
+
+                                    </span>
+
+
+                                </div>
+
+
+
+                            </div>
+
+
+                        </article>
+
+
+                    {% endfor %}
+
+
+                </div>
+
+
+
+            {% else %}
+
+
+
+                <div class="empty-state">
+
+
+                    <h3>
+                        No published articles yet
+                    </h3>
+
+
+                    <p>
+
+                        This author has not published any articles yet.
+
+                    </p>
+
+
+                </div>
+
+
+
+            {% endif %}
+
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+</section>
+
+
+{% endblock %}

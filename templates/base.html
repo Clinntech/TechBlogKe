@@ -1,0 +1,359 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            {{ page_title|default:"TechBlogKe" }}
+        {% endblock %}
+    </title>
+
+    <meta
+        name="description"
+        content="{% block meta_description %}{{ page_description|default:'Technology news, tutorials, insights, and stories from Kenya and beyond.' }}{% endblock %}"
+    >
+    {% block robots_meta %}{% endblock %}
+    {% block canonical_url %}{% endblock %}
+    <meta name="author" content="TechBlogKe">
+
+    <meta 
+    name="theme-color" 
+    content="#0b1f3a"
+    >   
+
+
+    <link
+    rel="icon"
+    type="image/svg+xml"
+    href="{% static 'images/favicon.svg' %}"
+    >
+
+
+    <link
+    rel="shortcut icon"
+    href="{% static 'images/favicon.svg' %}"
+    >
+
+    {% block social_meta %}
+
+    <meta property="og:site_name" content="TechBlogKe">
+    <meta property="og:title" content="TechBlogKe">
+    <meta
+        property="og:description"
+        content="Practical technology news, tutorials, and insights from Kenya and beyond."
+    >
+    <meta property="og:type" content="website">
+    <meta
+        property="og:url"
+        content="{{ request.build_absolute_uri }}"
+    >
+    {% endblock %}
+
+    {% block social_image %}{% endblock %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+        <div class="container navbar">
+            <a
+                class="site-brand"
+                href="{% url 'blog:home' %}"
+                aria-label="TechBlogKe homepage"
+            >
+                <span class="brand-mark">
+                    T
+                </span>
+
+                <span class="brand-text">
+                    TechBlog<span>Ke</span>
+                </span>
+            </a>
+
+            <button
+                class="mobile-menu-button"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false"
+                aria-controls="main-navigation"
+                data-menu-button
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav
+                class="main-navigation"
+                id="main-navigation"
+                aria-label="Main navigation"
+                data-navigation
+            >
+                <a href="{% url 'blog:home' %}">
+                    Home
+                </a>
+
+                <a href="{% url 'blog:post_list' %}">
+                    Articles
+                </a>
+
+                {% if user.is_authenticated and user.is_author %}
+                    <a href="{% url 'blog:my_posts' %}">
+                        Manage articles
+                    </a>
+
+                    <a
+                        class="nav-create-link"
+                        href="{% url 'blog:post_create' %}"
+                    >
+                        Write article
+                    </a>
+                {% endif %}
+            </nav>
+
+            <div class="navbar-actions">
+                <form
+                    class="nav-search"
+                    method="get"
+                    action="{% url 'blog:search' %}"
+                    role="search"
+                >
+                    <label
+                        class="sr-only"
+                        for="navigation-search"
+                    >
+                        Search TechBlogKe
+                    </label>
+
+                    <input
+                        id="navigation-search"
+                        name="q"
+                        type="search"
+                        value="{{ request.GET.q|default:'' }}"
+                        placeholder="Search articles"
+                        minlength="2"
+                    >
+
+                    <button
+                        type="submit"
+                        aria-label="Search articles"
+                    >
+                        Search
+                    </button>
+                </form>
+
+                {% if user.is_authenticated %}
+                    <div class="account-menu">
+                        <a
+                            class="account-link"
+                            href="{% url 'accounts:dashboard' %}"
+                        >
+                            <span class="account-avatar">
+                                {% if user.first_name %}
+                                    {{ user.first_name|first|upper }}
+                                {% else %}
+                                    {{ user.username|first|upper }}
+                                {% endif %}
+                            </span>
+
+                            <span class="account-name">
+                                {% if user.first_name %}
+                                    {{ user.first_name }}
+                                {% else %}
+                                    My account
+                                {% endif %}
+                            </span>
+                        </a>
+
+                        <form
+                            class="logout-form"
+                            method="post"
+                            action="{% url 'accounts:logout' %}"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="logout-button"
+                                type="submit"
+                            >
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a
+                        class="button button-secondary sign-in-button"
+                        href="{% url 'accounts:login' %}"
+                    >
+                        Sign in
+                    </a>
+
+                    <a
+                        class="button button-primary"
+                        href="{% url 'accounts:register' %}"
+                    >
+                        Create account
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+        <section
+            class="messages-container"
+            aria-label="Notifications"
+        >
+            {% for message in messages %}
+                <div
+                    class="alert alert-{{ message.tags|default:'info' }}"
+                    role="alert"
+                >
+                    <span>{{ message }}</span>
+
+                    <button
+                        class="alert-close message-close"
+                        type="button"
+                        aria-label="Dismiss notification"
+                        data-message-close
+                    >
+                        Close
+                    </button>
+                </div>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <main id="main-content" class="site-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand-section">
+                <a
+                    class="site-brand footer-brand"
+                    href="{% url 'blog:home' %}"
+                >
+                    <span class="brand-mark">T</span>
+
+                    <span class="brand-text">
+                        TechBlog<span>Ke</span>
+                    </span>
+                </a>
+
+                <p>
+                    Practical technology news, tutorials, insights,
+                    and stories from Kenya and beyond.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h2>Explore</h2>
+
+                <a href="{% url 'blog:home' %}">
+                    Home
+                </a>
+
+                <a href="{% url 'blog:post_list' %}">
+                    Latest articles
+                </a>
+
+                <a href="{% url 'blog:search' %}">
+                    Search
+                </a>
+            </div>
+
+            <div class="footer-column">
+                <h2>Account</h2>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}">
+                        Dashboard
+                    </a>
+
+                    <a href="{% url 'accounts:profile' %}">
+                        Profile
+                    </a>
+
+                    <a href="{% url 'accounts:profile_edit' %}">
+                        Edit profile
+                    </a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}">
+                        Sign in
+                    </a>
+
+                    <a href="{% url 'accounts:register' %}">
+                        Create account
+                    </a>
+
+                    <a href="{% url 'accounts:password_reset' %}">
+                        Reset password
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="footer-column">
+                <h2>Connect</h2>
+
+                <a href="mailto:clintechke@gmail.com">
+                    Email TechBlogKe
+                </a>
+
+                <a
+                    href="https://github.com/Clinntech"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    GitHub
+                </a>
+
+                <a
+                    href="https://clinntech.github.io/Clinton-Mutinda/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Portfolio
+                </a>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p>
+                Copyright {% now "Y" %} TechBlogKe.
+                All rights reserved.
+            </p>
+
+            <p>
+                Built with Python and Django.
+            </p>
+        </div>
+    </footer>
+
+    <script
+        src="{% static 'js/app.js' %}"
+        defer
+    ></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

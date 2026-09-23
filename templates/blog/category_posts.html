@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} Articles | TechBlogKe{% endblock %}
+
+{% block meta_description %}
+    {% if category.description %}
+        {{ category.description|truncatewords:25 }}
+    {% else %}
+        Explore the latest {{ category.name }} articles, tutorials and
+        technology insights on TechBlogKe.
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<section class="category-page">
+
+    <section class="page-hero category-hero">
+        <div class="container page-hero-content">
+
+            <nav class="breadcrumb breadcrumb-light" aria-label="Breadcrumb">
+                <a href="{% url 'blog:home' %}">Home</a>
+                <span>/</span>
+
+                <a href="{% url 'blog:post_list' %}">Articles</a>
+                <span>/</span>
+
+                <span>{{ category.name }}</span>
+            </nav>
+
+            <span class="eyebrow">ARTICLE CATEGORY</span>
+
+            <h1>{{ category.name }}</h1>
+
+            {% if category.description %}
+                <p>{{ category.description }}</p>
+            {% else %}
+                <p>
+                    Explore the latest articles, practical guides and
+                    technology insights about {{ category.name|lower }}.
+                </p>
+            {% endif %}
+
+            {% if page_obj %}
+                <div class="category-article-count">
+                    <strong>{{ page_obj.paginator.count }}</strong>
+
+                    <span>
+                        article{{ page_obj.paginator.count|pluralize }}
+                        available
+                    </span>
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+
+
+    {% if categories %}
+        <section class="category-filter-section">
+            <div class="container">
+                <div class="category-filter">
+                    <a
+                        href="{% url 'blog:post_list' %}"
+                        class="category-filter-link"
+                    >
+                        All articles
+                    </a>
+
+                    {% for item in categories %}
+                        <a
+                            href="{{ item.get_absolute_url }}"
+                            class="category-filter-link {% if item.id == category.id %}active{% endif %}"
+                        >
+                            {{ item.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+
+    <section class="section">
+        <div class="container">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">LATEST CONTENT</span>
+
+                    <h2>{{ category.name }} articles</h2>
+                </div>
+
+                <div class="section-heading-actions">
+                    {% if user.is_authenticated and user.is_author %}
+                        <a
+                            href="{% url 'blog:post_create' %}"
+                            class="button button-primary"
+                        >
+                            Write an article
+                        </a>
+                    {% endif %}
+
+                    <a
+                        href="{% url 'blog:post_list' %}"
+                        class="text-link"
+                    >
+                        Browse all articles
+                    </a>
+                </div>
+            </div>
+
+
+            {% if page_obj %}
+                <div class="article-grid">
+
+                    {% for post in page_obj %}
+                        <article class="article-card">
+
+                            <div class="article-card-image">
+                                {% if post.featured_image %}
+                                    <a href="{{ post.get_absolute_url }}">
+                                        <img
+                                            src="{{ post.featured_image.url }}"
+                                            alt="{{ post.title }}"
+                                            loading="lazy"
+                                        >
+                                    </a>
+                                {% else %}
+                                    <a
+                                        href="{{ post.get_absolute_url }}"
+                                        class="image-placeholder"
+                                    >
+                                        <span>TechBlogKe</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+
+
+                            <div class="article-card-content">
+                                <div class="article-card-top">
+                                    <a
+                                        href="{{ category.get_absolute_url }}"
+                                        class="category-badge"
+                                    >
+                                        {{ category.name }}
+                                    </a>
+
+                                    {% if post.is_featured %}
+                                        <span class="featured-badge">
+                                            Featured
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+
+                                <h2>
+                                    <a href="{{ post.get_absolute_url }}">
+                                        {{ post.title }}
+                                    </a>
+                                </h2>
+
+
+                                <p>
+                                    {% if post.excerpt %}
+                                        {{ post.excerpt|truncatewords:24 }}
+                                    {% else %}
+                                        {{ post.content|striptags|truncatewords:24 }}
+                                    {% endif %}
+                                </p>
+
+
+                                {% if post.tags.all %}
+                                    <div class="article-tags">
+                                        {% for tag in post.tags.all|slice:":3" %}
+                                            <a href="{{ tag.get_absolute_url }}">
+                                                {{ tag.name }}
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+
+                                <div class="article-card-footer">
+                                    <div class="article-author">
+                                        <span class="author-avatar">
+                                            {{ post.author.username|first|upper }}
+                                        </span>
+
+                                        <div>
+                                            <a
+                                                href="{% url 'blog:author_posts' post.author.username %}"
+                                                class="author-name"
+                                            >
+                                                {{ post.author.get_full_name|default:post.author.username }}
+                                            </a>
+
+                                            <span>
+                                                {{ post.published_at|date:"d M Y" }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <span class="reading-time">
+                                        {{ post.reading_time }} min read
+                                    </span>
+                                </div>
+                            </div>
+
+                        </article>
+                    {% endfor %}
+
+                </div>
+
+
+                {% if page_obj.has_other_pages %}
+                    <nav
+                        class="pagination"
+                        aria-label="{{ category.name }} articles pagination"
+                    >
+                        <div class="pagination-navigation">
+
+                            {% if page_obj.has_previous %}
+                                <a
+                                    href="?page={{ page_obj.previous_page_number }}"
+                                    class="pagination-button"
+                                >
+                                    Previous
+                                </a>
+                            {% else %}
+                                <span class="pagination-button disabled">
+                                    Previous
+                                </span>
+                            {% endif %}
+
+
+                            <div class="pagination-pages">
+                                {% for page_number in page_obj.paginator.page_range %}
+                                    {% if page_number == page_obj.number %}
+                                        <span
+                                            class="pagination-number active"
+                                            aria-current="page"
+                                        >
+                                            {{ page_number }}
+                                        </span>
+
+                                    {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+                                        <a
+                                            href="?page={{ page_number }}"
+                                            class="pagination-number"
+                                        >
+                                            {{ page_number }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+
+                            {% if page_obj.has_next %}
+                                <a
+                                    href="?page={{ page_obj.next_page_number }}"
+                                    class="pagination-button"
+                                >
+                                    Next
+                                </a>
+                            {% else %}
+                                <span class="pagination-button disabled">
+                                    Next
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <p class="pagination-summary">
+                            Page {{ page_obj.number }} of
+                            {{ page_obj.paginator.num_pages }}
+                        </p>
+                    </nav>
+                {% endif %}
+
+
+            {% else %}
+                <div class="empty-state">
+                    <span class="empty-state-label">
+                        NO ARTICLES AVAILABLE
+                    </span>
+
+                    <h2>
+                        No {{ category.name|lower }} articles have been
+                        published yet.
+                    </h2>
+
+                    <p>
+                        Published articles in this category will appear here.
+                        You can explore other topics while waiting for new
+                        content.
+                    </p>
+
+                    <div class="empty-state-actions">
+                        <a
+                            href="{% url 'blog:post_list' %}"
+                            class="button button-primary"
+                        >
+                            Browse all articles
+                        </a>
+
+                        {% if user.is_authenticated and user.is_author %}
+                            <a
+                                href="{% url 'blog:post_create' %}"
+                                class="button button-secondary"
+                            >
+                                Write an article
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </section>
+
+</section>
+
+{% endblock %}
