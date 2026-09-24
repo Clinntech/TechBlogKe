@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block robots_meta %}
-    {% if post.status != "published" or is_preview % or post.published_at > current_time %}
+    {% if post.status != "PUBLISHED" or is_preview or post.published_at > current_time %}
         <meta name="robots" content="noindex, nofollow">
     {% endif %}
 {% endblock %}
