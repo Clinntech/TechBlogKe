@@ -75,10 +75,6 @@ INSTALLED_APPS = [
     "accounts",
     "blog",
 
-    # Third-party applications
-    "cloudinary_storage",
-    "cloudinary",
-
     # Django applications
     "django.contrib.admin",
     "django.contrib.auth",
@@ -88,7 +84,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_ckeditor_5",
     "django.contrib.sitemaps",
-    
+
+    # Third-party applications
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 
