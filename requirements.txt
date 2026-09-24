@@ -3,3 +3,7 @@ Pillow==11.3.0
 django-ckeditor-5==0.2.18
 dj-database-url
 psycopg[binary]
+python-dotenv
+whitenoise
+django-cloudinary-storage
+cloudinary
