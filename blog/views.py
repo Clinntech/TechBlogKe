@@ -482,7 +482,7 @@ def search_view(request):
 
     return render(
         request,
-        "blog/search.html",
+        "blog/search_results.html",
         context,
     )
 
