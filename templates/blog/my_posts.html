@@ -88,22 +88,22 @@
                 </a>
 
                 <a
-                    href="?status=published{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
-                    class="filter-button {% if status_filter == 'published' %}active{% endif %}"
+                    href="?status=PUBLISHED{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
+                    class="filter-button {% if status_filter == 'PUBLISHED' %}active{% endif %}"
                 >
                     Published
                 </a>
 
                 <a
-                    href="?status=scheduled{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
-                    class="filter-button {% if status_filter == 'scheduled' %}active{% endif %}"
+                    href="?status=SCHEDULED{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
+                    class="filter-button {% if status_filter == 'SCHEDULED' %}active{% endif %}"
                 >
                     Scheduled
                 </a>
 
                 <a
-                    href="?status=draft{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
-                    class="filter-button {% if status_filter == 'draft' %}active{% endif %}"
+                   href="?status=DRAFT{% if search_query %}&amp;q={{ search_query|urlencode }}{% endif %}"
+                   class="filter-button {% if status_filter == 'DRAFT' %}active{% endif %}"
                 >
                     Drafts
                 </a>

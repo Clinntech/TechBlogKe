@@ -23,25 +23,35 @@ from .models import Category, Comment, Post, Tag
 User = get_user_model()
 
 
+def publish_due_posts():
+    """Publish scheduled posts whose scheduled time has arrived."""
+    now = timezone.now()
+
+    Post.objects.filter(
+        status=Post.Status.SCHEDULED,
+        scheduled_at__isnull=False,
+        scheduled_at__lte=now,
+    ).update(
+        status=Post.Status.PUBLISHED,
+        published_at=F("scheduled_at"),
+        scheduled_at=None,
+        updated_at=now,
+    )
+
 def published_posts():
     """
     Return only publicly available published posts.
     """
+    publish_due_posts()
 
     return (
         Post.objects.filter(
             status=Post.Status.PUBLISHED,
             published_at__lte=timezone.now(),
         )
-        .select_related(
-            "author",
-            "category",
-        )
-        .prefetch_related(
-            "tags",
-        )
+        .select_related( "author","category",)
+        .prefetch_related("tags",)
     )
-
 
 def paginate_queryset(
     request,
@@ -630,7 +640,8 @@ def my_posts_view(request):
     """
     Display the logged-in author's article dashboard.
     """
-
+    publish_due_posts()
+    
     author_posts = (
         Post.objects.filter(
             author=request.user,

@@ -3609,3 +3609,62 @@ select.form-control {
         transition: none;
     }
 }
+
+/* Manage Articles: keep each image inside its article card */
+.article-grid > .article-card {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.article-grid > .article-card .article-card-image {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.article-grid > .article-card .article-card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.article-grid > .article-card .article-card-content {
+    min-width: 0;
+}
+
+.managed-articles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.managed-article-card {
+    min-width: 0;
+    overflow: hidden;
+}
+
+.managed-article-image {
+    display: block;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.managed-article-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.managed-article-content {
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .managed-articles {
+        grid-template-columns: 1fr;
+    }
+}
